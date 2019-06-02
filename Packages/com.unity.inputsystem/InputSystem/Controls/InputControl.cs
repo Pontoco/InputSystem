@@ -942,7 +942,7 @@ namespace UnityEngine.InputSystem
         /// <value>
         /// The state data buffer for the device.
         /// </value>
-        protected internal unsafe void* currentStatePtr => InputStateBuffers.GetFrontBufferForDevice(GetDeviceIndex());
+        public internal unsafe void* currentStatePtr => InputStateBuffers.GetFrontBufferForDevice(GetDeviceIndex());
 
         /// <summary>
         /// The state data buffer for the device from the previous frame.
