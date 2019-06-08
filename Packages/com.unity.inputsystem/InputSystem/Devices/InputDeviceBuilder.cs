@@ -54,7 +54,29 @@ namespace UnityEngine.InputSystem.Layouts
             Setup(new InternedString(layout), new InternedString(variants), deviceDescription, existingDevice);
         }
 
+        public InputDeviceBuilder(InputControlLayout layout, string variants = null,
+                                  InputDeviceDescription deviceDescription = new InputDeviceDescription(),
+                                  InputDevice existingDevice = null)
+        {
+            Setup(layout, new InternedString(variants), deviceDescription, existingDevice);
+        }
+
         internal void Setup(InternedString layout, InternedString variants,
+            InputDeviceDescription deviceDescription = new InputDeviceDescription(),
+            InputDevice existingDevice = null)
+        {
+            if (existingDevice != null && existingDevice.m_DeviceIndex != InputDevice.kInvalidDeviceIndex)
+                throw new InvalidOperationException(
+                    $"Cannot modify control setup of existing device {existingDevice} while added to system.");
+
+            InstantiateLayout(layout, variants, new InternedString(), null, existingDevice);
+            FinalizeControlHierarchy();
+
+            m_Device.m_Description = deviceDescription;
+            m_Device.CallFinishSetupRecursive(this);
+        }
+
+        internal void Setup(InputControlLayout layout, InternedString variants,
             InputDeviceDescription deviceDescription = new InputDeviceDescription(),
             InputDevice existingDevice = null)
         {
