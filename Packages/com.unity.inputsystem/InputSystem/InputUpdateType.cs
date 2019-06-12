@@ -71,7 +71,8 @@ namespace UnityEngine.InputSystem.LowLevel
         Default = Dynamic | Fixed | Editor,
     }
 
-    internal static class InputUpdate
+    // (ASG) must be public so we can know how many inputs have passed.
+    public static class InputUpdate
     {
         public static uint s_UpdateStepCount; // read only, but kept as a variable for performance reasons
         public static InputUpdateType s_LatestUpdateType;
