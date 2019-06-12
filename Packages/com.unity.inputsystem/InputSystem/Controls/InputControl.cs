@@ -942,7 +942,21 @@ namespace UnityEngine.InputSystem
         /// <value>
         /// The state data buffer for the device.
         /// </value>
-        public internal unsafe void* currentStatePtr => InputStateBuffers.GetFrontBufferForDevice(GetDeviceIndex());
+        /// <remarks>
+        /// (ASG) This pointer now first checks for an override pointer before deferring to the default pointer
+        /// from the input system.
+        /// </remarks>
+        protected internal unsafe void* currentStatePtr
+        {
+            get
+            {
+                if (device.currentStatePtrOverride != (void*) 0)
+                {
+                    return device.currentStatePtrOverride;
+                }
+                return InputStateBuffers.GetFrontBufferForDevice(GetDeviceIndex());
+            }
+        }
 
         /// <summary>
         /// The state data buffer for the device from the previous frame.
@@ -950,7 +964,21 @@ namespace UnityEngine.InputSystem
         /// <value>
         /// The state data buffer for the device from the previous frame.
         /// </value>
-        protected internal unsafe void* previousFrameStatePtr => InputStateBuffers.GetBackBufferForDevice(GetDeviceIndex());
+        /// <remarks>
+        /// (ASG) This pointer now first checks for an override pointer before deferring to the default pointer
+        /// from the input system.
+        /// </remarks>
+        protected internal unsafe void* previousFrameStatePtr
+        {
+            get
+            {
+                if (device.previousFrameStatePtrOverride != (void*) 0)
+                {
+                    return device.previousFrameStatePtrOverride;
+                }
+                return InputStateBuffers.GetBackBufferForDevice(GetDeviceIndex());
+            }
+        }
 
         /// <summary>
         /// The default state data buffer
@@ -958,7 +986,21 @@ namespace UnityEngine.InputSystem
         /// <value>
         /// Buffer that has state for each device initialized with default values.
         /// </value>
-        protected internal unsafe void* defaultStatePtr => InputStateBuffers.s_DefaultStateBuffer;
+        /// <remarks>
+        /// (ASG) This pointer now first checks for an override pointer before deferring to the default pointer
+        /// from the input system.
+        /// </remarks>
+        protected internal unsafe void* defaultStatePtr
+        {
+            get
+            {
+                if (device.defaultStatePtrOverride != (void*) 0)
+                {
+                    return device.defaultStatePtrOverride;
+                }
+                return InputStateBuffers.s_DefaultStateBuffer;
+            }
+        }
 
         /// <summary>
         /// Return the memory that holds the noise mask for the control.
@@ -974,8 +1016,21 @@ namespace UnityEngine.InputSystem
         /// is noise.
         ///
         /// A control can be marked as <see cref="noisy"/>.
+        ///
+        /// (ASG) This pointer now first checks for an override pointer before deferring to the default pointer
+        /// from the input system.
         /// </remarks>
-        protected internal unsafe void* noiseMaskPtr => InputStateBuffers.s_NoiseMaskBuffer;
+		protected internal unsafe void* noiseMaskPtr
+        {
+            get
+            {
+                if (device.noiseMaskPtrOverride != (void*) 0)
+                {
+                    return device.noiseMaskPtrOverride;
+                }
+                return InputStateBuffers.s_NoiseMaskBuffer;
+            }
+        }
 
         /// <summary>
         /// The offset of this control's state relative to its device root.
