@@ -295,7 +295,7 @@ namespace UnityEngine.InputSystem.Editor
                 InitializeWithCurrentSettings();
 
             ////REVIEW: leads to double-repaint when the settings change is initiated by us; problem?
-            Repaint();
+            // Repaint();
         }
 
         /// <summary>
