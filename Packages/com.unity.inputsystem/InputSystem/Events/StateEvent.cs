@@ -107,5 +107,36 @@ namespace UnityEngine.InputSystem.LowLevel
             eventPtr = stateEventPtr->ToEventPtr();
             return buffer;
         }
+
+        /// <summary>
+        /// Read the current state of <paramref name="device"/> and create a state event from it.
+        /// </summary>
+        /// <param name="eventPtr">Receives a pointer to the newly created state event.</param>
+        /// <param name="allocator">Which native allocator to allocate memory for the event from. By default, the buffer is
+        /// allocated as temporary memory (<see cref="Allocator.Temp"/>. Note that this means the buffer will not be valid
+        /// past the current frame. Use <see cref="Allocator.Persistent"/> if the buffer for the state event is meant to
+        /// persist for longer.</param>
+        /// <returns>Buffer of unmanaged memory allocated for the event.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
+        public static NativeArray<byte> FromStateBuffer(byte[] fullDeviceStateBuffer, FourCC stateFormat, out InputEventPtr eventPtr,  Allocator allocator = Allocator.Temp)
+        {
+            var stateSize = fullDeviceStateBuffer.Length;
+
+            fixed (byte* statePtr = fullDeviceStateBuffer)
+            {
+                var eventSize = InputEvent.kBaseEventSize + sizeof(int) + stateSize;
+
+                var buffer = new NativeArray<byte>((int) eventSize, allocator);
+                var stateEventPtr = (StateEvent*) buffer.GetUnsafePtr();
+
+                stateEventPtr->baseEvent = new InputEvent(Type, (int) eventSize, -1, InputRuntime.s_Instance.currentTime);
+                stateEventPtr->stateFormat = stateFormat;
+                UnsafeUtility.MemCpy(stateEventPtr->state, statePtr, stateSize);
+
+                eventPtr = stateEventPtr->ToEventPtr();
+
+                return buffer;
+            }
+        }
     }
 }
