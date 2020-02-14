@@ -695,9 +695,16 @@ namespace UnityEngine.InputSystem.Layouts
             {
                 var name = controlItem.processors[n].name;
                 var type = InputProcessor.s_Processors.LookupTypeRegistration(name);
+
+                // (ASG): We've moved this to a warning, because some processors (ex. EditorWindowSpaceProcessor)
+                // are not available in standalone, but we would still like to try to simulate editor input recordings
+                // in a best-effort way.
                 if (type == null)
-                    throw new InvalidOperationException(
+                {
+                    Debug.LogWarning(
                         $"Cannot find processor '{name}' referenced by control '{controlItem.name}' in layout '{layoutName}'");
+                    continue;
+                }
 
                 var processor = Activator.CreateInstance(type);
 
