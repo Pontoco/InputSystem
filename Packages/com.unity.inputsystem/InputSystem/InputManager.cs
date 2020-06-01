@@ -6,6 +6,7 @@ using Unity.Collections;
 using UnityEngine.InputSystem.Composites;
 using UnityEngine.InputSystem.Controls;
 using Unity.Collections.LowLevel.Unsafe;
+using UnityEditor;
 using UnityEngine.Profiling;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Processors;
@@ -2726,11 +2727,14 @@ namespace UnityEngine.InputSystem
                         // Remark: devices in the editor should use different input state buffers (ie. these events 
                         //   should technically only corrupt editor buffers), but somehow this event data gets copied
                         //   over to the player buffers when unpaused.
+                        #if UNITY_EDITOR
                         bool disabledInEditor = device.name.Contains("Oculus");
-                        if (disabledInEditor)
+                        if (EditorApplication.isPaused && updateType == InputUpdateType.Editor && disabledInEditor)
                         {
+                            // Ignore events when the editor player is paused, for oculus.
                             break;
                         }
+                        #endif
                         
                         // Ignore state changes if device is disabled.
                         if (!device.enabled)
