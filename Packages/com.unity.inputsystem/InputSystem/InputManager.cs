@@ -2727,6 +2727,8 @@ namespace UnityEngine.InputSystem
                         // Remark: devices in the editor should use different input state buffers (ie. these events 
                         //   should technically only corrupt editor buffers), but somehow this event data gets copied
                         //   over to the player buffers when unpaused.
+                        // Remark: updateType:Editor events happen when the game is playing, but the
+                        //   editor window is focused, rather than the game view. 
                         #if UNITY_EDITOR
                         bool disabledInEditor = device.name.Contains("Oculus");
                         if (EditorApplication.isPaused && updateType == InputUpdateType.Editor && disabledInEditor)
