@@ -2511,6 +2511,20 @@ namespace UnityEngine.InputSystem
 
                         var eventPtr = new InputEventPtr(currentEventReadPtr);
 
+                        // (ASG)
+                        // This is a workaround to fix a bug. Sometimes when the player is paused in the editor,
+                        // invalid events are output by UnityEngine for Oculus devices: events that have garbage in
+                        // their state buffers. There is no easy way to separate garbage from real event buffers,
+                        // but VR devices have no reason to update in editor mode, anyway.
+                        // Remark: devices in the editor should use different input state buffers (ie. these events 
+                        //   should technically only corrupt editor buffers), but somehow this event data gets copied
+                        //   over to the player buffers when unpaused.
+                        bool disabledInEditor = device.name.Contains("Oculus");
+                        if (disabledInEditor)
+                        {
+                            break;
+                        }
+                        
                         // Ignore state changes if device is disabled.
                         if (!device.enabled)
                         {
