@@ -974,6 +974,24 @@ namespace UnityEngine.InputSystem
             }
         }
 
+        // (ASG)
+        /// <summary>Dumps the current state the input device.</summary>
+        public void DumpToLog()
+        {
+            string dump;
+            unsafe
+            {
+                dump = $"Dump device state [{device.name}] :: {new IntPtr(device.currentStatePtr)}\n";
+            }
+
+            foreach (InputControl control in device.allControls)
+            {
+                dump += $"{control.name}: " + control.ReadValueAsObject() + "\n";
+            }
+
+            Debug.Log(dump);
+        }
+
         internal unsafe void WriteChangedControlStates(byte* deviceStateBuffer, void* statePtr, uint stateSizeInBytes,
             uint stateOffsetInDevice)
         {
