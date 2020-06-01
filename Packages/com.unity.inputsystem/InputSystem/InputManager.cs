@@ -6,7 +6,6 @@ using Unity.Collections;
 using UnityEngine.InputSystem.Composites;
 using UnityEngine.InputSystem.Controls;
 using Unity.Collections.LowLevel.Unsafe;
-using UnityEditor;
 using UnityEngine.Profiling;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Processors;
@@ -15,6 +14,7 @@ using UnityEngine.InputSystem.Utilities;
 using UnityEngine.InputSystem.Layouts;
 
 #if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine.InputSystem.Editor;
 #endif
 
