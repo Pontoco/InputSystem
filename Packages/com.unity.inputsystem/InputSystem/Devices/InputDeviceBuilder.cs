@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Unity.Profiling;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Utilities;
@@ -60,11 +61,15 @@ namespace UnityEngine.InputSystem.Layouts
             m_Device.CallFinishSetupRecursive();
         }
 
+        private static readonly ProfilerMarker SetupMarker = new("InputDeviceBuilder.Setup");
+
         // ASG
         /// <summary> Setup a device builder directly from a control layout, rather than a layout name.</summary>
         public void Setup(InputControlLayout layout, InternedString variants,
                             InputDeviceDescription deviceDescription = default)
         {
+            using var autoMarker = SetupMarker.Auto();
+
             m_LayoutCacheRef = InputControlLayout.CacheRef();
         
             InstantiateLayout(layout, variants, new InternedString(), null);
@@ -126,9 +131,13 @@ namespace UnityEngine.InputSystem.Layouts
             return InstantiateLayout(layoutInstance, variants, name, parent);
         }
 
+        private static readonly ProfilerMarker InstantiateLayoutMarker = new("InputDeviceBuilder.InstantiateLayout");
+
         private InputControl InstantiateLayout(InputControlLayout layout, InternedString variants, InternedString name,
             InputControl parent)
         {
+            using var autoMarker = InstantiateLayoutMarker.Auto();
+
             Debug.Assert(layout.type != null, "Layout has no type set on it");
 
             // No, so create a new control.

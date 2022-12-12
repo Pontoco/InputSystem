@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine.InputSystem.Haptics;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Profiling;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.LowLevel;
@@ -1527,6 +1528,8 @@ namespace UnityEngine.InputSystem
             s_Manager.AddDevice(device);
         }
 
+        private static readonly ProfilerMarker CreateDeviceFromJsonMarker = new("InputSystem.CreateDeviceFromJson");
+
         // ASG
         /// <summary>
         /// Creates a device with the given a json string layout. This is potentially a costly operation as constructing
@@ -1535,6 +1538,8 @@ namespace UnityEngine.InputSystem
         public static InputDevice CreateDeviceFromJson(string layoutJson, string name = null,
                                      InternedString variants = new InternedString())
         {
+            using var autoMarker = CreateDeviceFromJsonMarker.Auto();
+
             // Instantiate the layout.
             InputControlLayout layout = InputControlLayout.FromJson(layoutJson);
 
