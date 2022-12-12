@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using Unity.Profiling;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Utilities;
 
@@ -1009,9 +1010,12 @@ namespace UnityEngine.InputSystem.Layouts
             return JsonUtility.ToJson(layout, true);
         }
 
+        private static readonly ProfilerMarker FromJsonMarker = new("InputControlLayout.FromJson");
+
         // Constructs a layout from the given JSON source.
         public static InputControlLayout FromJson(string json)
         {
+            using var autoMarker = FromJsonMarker.Auto();
             var layoutJson = JsonUtility.FromJson<LayoutJson>(json);
             return layoutJson.ToLayout();
         }
@@ -1626,8 +1630,12 @@ namespace UnityEngine.InputSystem.Layouts
             // ReSharper restore MemberCanBePrivate.Local
             #pragma warning restore 0649
 
+            private static readonly ProfilerMarker ToLayoutMarker = new("InputControlLayout.ToLayout");
+
             public InputControlLayout ToLayout()
             {
+                using var autoMarker = ToLayoutMarker.Auto();
+
                 // By default, the type of the layout is determined from the first layout
                 // in its 'extend' property chain that has a type set. However, if the layout
                 // extends nothing, we can't know what type to use for it so we default to
