@@ -1535,10 +1535,20 @@ namespace UnityEngine.InputSystem
         /// Creates a device with the given a json string layout. This is potentially a costly operation as constructing
         /// a layout from JSON heavily allocates.
         /// </summary>
-        public static InputDevice CreateDeviceFromJson(string layoutJson, string name = null,
+        public static InputDevice CreateDeviceFromJson(string layoutJson, InputDeviceDescription deviceDescription,
                                      InternedString variants = new InternedString())
         {
             using var autoMarker = CreateDeviceFromJsonMarker.Auto();
+
+            InternedString layoutName = InputControlLayout.s_Layouts.TryFindMatchingLayout(deviceDescription);
+
+            if (InputControlLayout.s_Layouts.precompiledLayouts.TryGetValue(layoutName, out var precompiledLayout))
+            {
+                // This is pretty much a direct new() of the device.
+                InputDevice device = precompiledLayout.factoryMethod();
+                device.CallFinishSetupRecursive();
+                return device;
+            }
 
             // Instantiate the layout.
             InputControlLayout layout = InputControlLayout.FromJson(layoutJson);
