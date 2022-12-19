@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEditor;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.Processors;
@@ -14,6 +15,42 @@ namespace UnityEngine.InputSystem.Editor
 {
     internal static class InputLayoutCodeGenerator
     {
+        [MenuItem("Assets/ASG/Precompile Device Layout from JSON")]
+        public static void GenerateCodeForDeviceLayoutJson()
+        {
+            // Check that json asset is selected.
+            var asset = Selection.activeObject;
+
+            var textAsset = asset as TextAsset;
+            if (textAsset == null)
+            {
+                Debug.LogError($"Expected text asset, but got [{asset.GetType()}]");
+                return;
+            }
+
+            // Parse json into layout.
+            InputControlLayout layout = InputControlLayout.FromJson(textAsset.text);
+
+            // Select file destination.
+            string textAssetPath = AssetDatabase.GetAssetPath(textAsset);
+            string destinationFile = EditorUtility.SaveFilePanel("Select destination file", Path.Combine(textAssetPath, ".."), "Fast" + textAsset.name, "cs");
+            if (destinationFile == null)
+            {
+                return;
+            }
+
+            // Build device from layout.
+            using var builderRef = InputDeviceBuilder.Ref();
+            InputDeviceBuilder.instance.Setup(layout, layout.variants);
+            InputDevice device = InputDeviceBuilder.instance.Finish();
+
+            string codeFileContents = GenerateCodeForDevice(device, layout.name, null, "Fast");
+
+            File.WriteAllText(destinationFile, codeFileContents);
+
+            AssetDatabase.Refresh();
+        }
+
         public static string GenerateCodeFileForDeviceLayout(string layoutName, string fileName, string prefix = "Fast")
         {
             string defines = null;
@@ -75,6 +112,11 @@ namespace UnityEngine.InputSystem.Editor
             // Produce a device from the layout.
             var device = InputDevice.Build<InputDevice>(layoutName, noPrecompiledLayouts: true);
 
+            return GenerateCodeForDevice(device, layoutName, defines, namePrefix, visibility, @namespace);
+        }
+
+        public static string GenerateCodeForDevice(InputDevice device, string layoutName, string defines = null, string namePrefix = "Fast", string visibility = "public", string @namespace = null)
+        {
             // Get info about base type.
             var baseType = device.GetType();
             var baseTypeName = baseType.Name;
