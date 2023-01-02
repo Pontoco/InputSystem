@@ -1004,10 +1004,10 @@ namespace UnityEngine.InputSystem.Layouts
             return layout;
         }
 
-        public string ToJson()
+        public string ToJson(bool prettyPrint = true)
         {
             var layout = LayoutJson.FromLayout(this);
-            return JsonUtility.ToJson(layout, true);
+            return JsonUtility.ToJson(layout, prettyPrint);
         }
 
         private static readonly ProfilerMarker FromJsonMarker = new("InputControlLayout.FromJson");
