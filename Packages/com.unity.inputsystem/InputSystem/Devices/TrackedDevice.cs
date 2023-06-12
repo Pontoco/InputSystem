@@ -26,7 +26,7 @@ namespace UnityEngine.InputSystem
             base.FinishSetup();
 
             trackingState = GetChildControl<IntegerControl>("trackingState");
-            isTracked = GetChildControl<ButtonControl>("isTracked");
+            isTracked = GetChildControl<ButtonControl>("IsTracked"); // Fixed for InputSystem bug with Turkish
             devicePosition = GetChildControl<Vector3Control>("devicePosition");
             deviceRotation = GetChildControl<QuaternionControl>("deviceRotation");
         }
