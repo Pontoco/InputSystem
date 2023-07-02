@@ -28,6 +28,10 @@ using UnityEngine.Networking.PlayerConnection;
 using CustomBindingPathValidator = System.Func<string, System.Action>;
 #endif
 
+// (PON): Expose the Unity Input Package internals to our engine layer. This lets us avoid making too many modifications
+// to the InputSystem package directly.
+[assembly: InternalsVisibleTo("Core.Harness")]
+
 ////TODO: allow aliasing processors etc
 
 ////REVIEW: rename all references to "frame" to refer to "update" instead (e.g. wasPressedThisUpdate)?
