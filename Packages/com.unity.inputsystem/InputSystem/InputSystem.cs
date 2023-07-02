@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using UnityEngine.InputSystem.Haptics;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine.InputSystem.Controls;
@@ -22,6 +23,10 @@ using UnityEditor.Networking.PlayerConnection;
 using System.Linq;
 using UnityEngine.Networking.PlayerConnection;
 #endif
+
+// (PON): Expose the Unity Input Package internals to our engine layer. This lets us avoid making too many modifications
+// to the InputSystem package directly.
+[assembly: InternalsVisibleTo("Core.Harness")]
 
 ////TODO: allow aliasing processors etc
 
