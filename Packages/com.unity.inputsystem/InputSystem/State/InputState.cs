@@ -34,6 +34,13 @@ namespace UnityEngine.InputSystem.LowLevel
 
         public static double currentTime => InputRuntime.s_Instance.currentTime - InputRuntime.s_CurrentTimeOffsetToRealtimeSinceStartup;
 
+        // ASG: We need this to set the correct timestamps to our hands input events.
+        // When the InputSystem consumes events on the FixedUpdate, it uses a separate clock that tracks fixedTime.
+        // This allows it to correctly time-slice raw input events and feed them to the fixed updates which may be
+        // running at a completely different pace. So, if we want events we queue to be consumed immediately, we need to
+        // use this clock instead of the default.
+        public static double currentFixedTime => InputRuntime.s_Instance.currentTimeForFixedUpdate - InputRuntime.s_CurrentTimeOffsetToRealtimeSinceStartup; 
+        
         /// <summary>
         /// Callback that is triggered when the state of an input device changes.
         /// </summary>
