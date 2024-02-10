@@ -219,6 +219,7 @@ namespace UnityEngine.InputSystem.LowLevel
             }
         }
 
+        // Note(PON): The timeline input events are on. realTimeSinceStartup, since the start of the player. 
         public double currentTime => NativeInputSystem.currentTime;
 
         ////REVIEW: this applies the offset, currentTime doesn't

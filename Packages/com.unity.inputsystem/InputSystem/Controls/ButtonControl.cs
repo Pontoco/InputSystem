@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Scripting;
@@ -236,6 +237,7 @@ namespace UnityEngine.InputSystem.Controls
             }
         }
 
+
         /// <summary>
         /// Whether the press started this frame.
         /// </summary>
@@ -275,25 +277,33 @@ namespace UnityEngine.InputSystem.Controls
         ///
         ///
         /// </remarks>
+        // (PON): We've deprecated these. Use InputAction.WasPressedThisFrame() instead.
+        // This is because we poll on several schedules (Update and FixedUpdate), which is more complex than 
+        // simply checking the previous frame buffer. (Previous Frame Buffer only contains previous render frame)
+        // It would not be possible to use this logic if the previous value was several frames behind.
+        [Obsolete("Pontoco: Use InputAction.WasPressedThisFrame() instead.")]
         public bool wasPressedThisFrame
         {
             get
             {
-                // Take the old path if this is the first time calling.
-                if (!needsToCheckFramePress)
-                {
-                    var currentlyPressed = IsValueConsideredPressed(value);
-                    var pressedLastFrame = IsValueConsideredPressed(ReadValueFromPreviousFrame());
-                    BeginTestingForFramePresses(currentlyPressed, pressedLastFrame);
-
-                    return device.wasUpdatedThisFrame && currentlyPressed && !pressedLastFrame;
-                }
-
-                #if UNITY_EDITOR
-                if (InputUpdate.s_LatestUpdateType.IsEditorUpdate())
-                    return InputUpdate.s_UpdateStepCount == m_UpdateCountLastPressedEditor;
-                #endif
-                return InputUpdate.s_UpdateStepCount == m_UpdateCountLastPressed;
+                // We leave this as an exception because the InputSystem tests still get compiled in the project.
+                throw new NotSupportedException("Pontoco: This is deprecated. Use InputAction.WasPressedThisFrame() instead.");
+                
+                // // Take the old path if this is the first time calling.
+                // if (!needsToCheckFramePress)
+                // {
+                //     var currentlyPressed = IsValueConsideredPressed(value);
+                //     var pressedLastFrame = IsValueConsideredPressed(ReadValueFromPreviousFrame());
+                //     BeginTestingForFramePresses(currentlyPressed, pressedLastFrame);
+                //
+                //     return device.wasUpdatedThisFrame && currentlyPressed && !pressedLastFrame;
+                // }
+                //
+                // #if UNITY_EDITOR
+                // if (InputUpdate.s_LatestUpdateType.IsEditorUpdate())
+                //     return InputUpdate.s_UpdateStepCount == m_UpdateCountLastPressedEditor;
+                // #endif
+                // return InputUpdate.s_UpdateStepCount == m_UpdateCountLastPressed;
             }
         }
 
@@ -320,25 +330,33 @@ namespace UnityEngine.InputSystem.Controls
         /// }
         /// </code>
         /// </example>
+        // (PON): We've deprecated these. Use InputAction.WasPressedThisFrame() instead.
+        // This is because we poll on several schedules (Update and FixedUpdate), which is more complex than 
+        // simply checking the previous frame buffer. (Previous Frame Buffer only contains previous render frame)
+        // It would not be possible to use this logic if the previous value was several frames behind.
+        [Obsolete("Pontoco: Use InputAction.WasReleasedThisFrame() instead.")]
         public bool wasReleasedThisFrame
         {
             get
             {
+                // We leave this as an exception because the InputSystem tests still get compiled in the project.
+                throw new NotSupportedException("Pontoco: This is deprecated. Use InputAction.WasReleasedThisFrame() instead.");
+                
                 // Take the old path if this is the first time calling.
-                if (!needsToCheckFramePress)
-                {
-                    var currentlyPressed = IsValueConsideredPressed(value);
-                    var pressedLastFrame = IsValueConsideredPressed(ReadValueFromPreviousFrame());
-                    BeginTestingForFramePresses(currentlyPressed, pressedLastFrame);
-
-                    return device.wasUpdatedThisFrame && !currentlyPressed && pressedLastFrame;
-                }
-
-                #if UNITY_EDITOR
-                if (InputUpdate.s_LatestUpdateType.IsEditorUpdate())
-                    return InputUpdate.s_UpdateStepCount == m_UpdateCountLastReleasedEditor;
-                #endif
-                return InputUpdate.s_UpdateStepCount == m_UpdateCountLastReleased;
+                // if (!needsToCheckFramePress)
+                // {
+                //     var currentlyPressed = IsValueConsideredPressed(value);
+                //     var pressedLastFrame = IsValueConsideredPressed(ReadValueFromPreviousFrame());
+                //     BeginTestingForFramePresses(currentlyPressed, pressedLastFrame);
+                //
+                //     return device.wasUpdatedThisFrame && !currentlyPressed && pressedLastFrame;
+                // }
+                //
+                // #if UNITY_EDITOR
+                // if (InputUpdate.s_LatestUpdateType.IsEditorUpdate())
+                //     return InputUpdate.s_UpdateStepCount == m_UpdateCountLastReleasedEditor;
+                // #endif
+                // return InputUpdate.s_UpdateStepCount == m_UpdateCountLastReleased;
             }
         }
 
