@@ -1276,18 +1276,20 @@ namespace UnityEngine.InputSystem
         // (PON): Deprecated as a part of our input polling tweak. This reads the value from the previous 'input frame'
         // which is the last time input was updated, and could be in either the Render or FixedUpdate. Using this is 
         // liable to cause lost inputs or inaccuracies.
+        //
         ////REVIEW: is 'frame' really the best wording here?
         // /// <summary>
         // /// Get the control's value from the previous frame (<see cref="InputControl.previousFrameStatePtr"/>).
         // /// </summary>
         // /// <returns>The control's value in the previous frame.</returns>
-        // public TValue ReadValueFromPreviousFrame()
-        // {
-        //     unsafe
-        //     {
-        //         return ReadValueFromState(previousFrameStatePtr);
-        //     }
-        // }
+        [Obsolete("PON: We've deprecated these. Use InputAction.WasPressedThisFrame() instead.", true)]
+        public TValue ReadValueFromPreviousFrame()
+        {
+            unsafe
+            {
+                return ReadValueFromState(previousFrameStatePtr);
+            }
+        }
 
         /// <summary>
         /// Get the control's default value.
