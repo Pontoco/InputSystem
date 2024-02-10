@@ -2108,6 +2108,15 @@ namespace UnityEngine.InputSystem
         private InputDeviceExecuteCommandDelegate m_DeviceFindExecuteCommandDelegate;
         private int m_DeviceFindExecuteCommandDeviceId;
 
+        /// <summary>
+        /// (PON): The updateCount of the last time we polled for changes. Used to define what a 'frame' is in
+        /// ButtonControl.wasPressedThisFrame, InputAction.WasPressedThisFrame(), etc. This can be set manually
+        /// if you have several schedules you would like to poll buttons on, such as both the FixedUpdate and Update().
+        /// If not set, defaults to the immediately previous update. 
+        /// </summary>
+        /// <seealso cref="InputSystem.SetLastPollingUpdate"/>
+        public uint? lastPollingUpdate;
+        
         #if UNITY_ANALYTICS || UNITY_EDITOR
         private bool m_HaveSentStartupAnalytics;
         #endif

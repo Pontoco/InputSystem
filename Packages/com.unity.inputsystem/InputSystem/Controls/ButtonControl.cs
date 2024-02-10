@@ -118,9 +118,12 @@ namespace UnityEngine.InputSystem.Controls
         /// </code>
         /// </example>
         /// </remarks>
-        public bool wasPressedThisFrame => device.wasUpdatedThisFrame && IsValueConsideredPressed(value) && !IsValueConsideredPressed(ReadValueFromPreviousFrame());
+        // (PON): We've deprecated these. Use InputAction.WasPressedThisFrame() instead.
+        // This is because we poll on several schedules (Update and FixedUpdate), which is more complex than 
+        // simply checking the previous frame buffer. (Previous Frame Buffer only contains previous render frame)
+        // public bool wasPressedThisFrame => device.wasUpdatedThisFrame && IsValueConsideredPressed(value) && !IsValueConsideredPressed(ReadValueFromPreviousFrame());
 
-        public bool wasReleasedThisFrame => device.wasUpdatedThisFrame && !IsValueConsideredPressed(value) && IsValueConsideredPressed(ReadValueFromPreviousFrame());
+        // public bool wasReleasedThisFrame => device.wasUpdatedThisFrame && !IsValueConsideredPressed(value) && IsValueConsideredPressed(ReadValueFromPreviousFrame());
 
         // We make the current global default button press point available as a static so that we don't have to
         // constantly make the hop from InputSystem.settings -> InputManager.m_Settings -> defaultButtonPressPoint.

@@ -1234,9 +1234,10 @@ namespace UnityEngine.InputSystem
             var state = GetOrCreateActionMap().m_State;
             if (state != null)
             {
+                // (PON): Modified so we can poll this in FixedUpdate(). See InputSystem.SetLastPollingUpdate().
                 var actionStatePtr = &state.actionStates[m_ActionIndexInState];
-                var currentUpdateStep = InputUpdate.s_UpdateStepCount;
-                return actionStatePtr->pressedInUpdate == currentUpdateStep && currentUpdateStep != default;
+                var lastPollingUpdate = InputSystem.s_Manager.lastPollingUpdate ?? InputState.updateCount - 1;
+                return actionStatePtr->pressedInUpdate > lastPollingUpdate;
             }
 
             return false;
@@ -1283,9 +1284,10 @@ namespace UnityEngine.InputSystem
             var state = GetOrCreateActionMap().m_State;
             if (state != null)
             {
+                // (PON): Modified so we can poll this in FixedUpdate(). See InputSystem.SetLastPollingUpdate().
                 var actionStatePtr = &state.actionStates[m_ActionIndexInState];
-                var currentUpdateStep = InputUpdate.s_UpdateStepCount;
-                return actionStatePtr->releasedInUpdate == currentUpdateStep && currentUpdateStep != default;
+                var lastPollingUpdate = InputSystem.s_Manager.lastPollingUpdate ?? InputState.updateCount - 1;
+                return actionStatePtr->releasedInUpdate > lastPollingUpdate;
             }
 
             return false;
@@ -1342,9 +1344,10 @@ namespace UnityEngine.InputSystem
 
             if (state != null)
             {
+                // (PON): Modified so we can poll this in FixedUpdate(). See InputSystem.SetLastPollingUpdate().
                 var actionStatePtr = &state.actionStates[m_ActionIndexInState];
-                var currentUpdateStep = InputUpdate.s_UpdateStepCount;
-                return actionStatePtr->lastPerformedInUpdate == currentUpdateStep && currentUpdateStep != default;
+                var lastPollingUpdate = InputSystem.s_Manager.lastPollingUpdate ?? InputState.updateCount - 1;
+                return actionStatePtr->lastPerformedInUpdate > lastPollingUpdate;
             }
 
             return false;
