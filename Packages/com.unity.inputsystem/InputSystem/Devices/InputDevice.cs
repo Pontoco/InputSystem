@@ -349,7 +349,10 @@ namespace UnityEngine.InputSystem
         /// </remarks>
         public double lastUpdateTime => m_LastUpdateTimeInternal - InputRuntime.s_CurrentTimeOffsetToRealtimeSinceStartup;
 
-        public bool wasUpdatedThisFrame => m_CurrentUpdateStepCount == InputUpdate.s_UpdateStepCount;
+        // (PON): Modified so we can poll this in FixedUpdate(). See InputSystem.SetLastPollingUpdate().
+        public bool wasUpdatedThisFrame => InputSystem.s_Manager.lastPollingUpdate.HasValue
+            ? m_CurrentUpdateStepCount > InputSystem.s_Manager.lastPollingUpdate.Value
+            : m_CurrentUpdateStepCount == InputUpdate.s_UpdateStepCount;
 
         /// <summary>
         /// A flattened list of controls that make up the device.

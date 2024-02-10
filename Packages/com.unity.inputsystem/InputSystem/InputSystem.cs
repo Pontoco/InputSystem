@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using UnityEngine.InputSystem.Haptics;
 using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine.Assertions;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.LowLevel;
@@ -3207,6 +3208,33 @@ namespace UnityEngine.InputSystem
 
         internal static InputManager s_Manager;
         internal static InputRemoting s_Remote;
+        
+        // (PON): Added to support polling input in both Update and FixedUpdate.
+        /// <summary>
+        /// The updateCount of the last time we polled for changes. Used to define what a 'frame' is in
+        /// InputAction.WasPressedThisFrame(), etc. This can be used if you have several schedules you would
+        /// like to poll buttons on, such as both the FixedUpdate() and Update().
+        /// 
+        /// The intention is to run this before each polling (ie. Update and FixedUpdate) to control which button presses
+        /// are considered 'happened since the last frame'. Defaults to the immediately previous update step, which makes
+        /// the 'frame' a single InputSystem.Update().
+        /// </summary>
+        public static void SetLastPollingUpdate(uint lastPollingUpdate)
+        {
+            Assert.IsTrue(s_Manager.lastPollingUpdate == null, "A last polling update was already set, are you missing a call to UnsetLastPollingUpdate()?");
+            s_Manager.lastPollingUpdate = lastPollingUpdate;
+        }
+
+        // (PON): Added to support polling input in both Update and FixedUpdate.
+        /// <summary>
+        /// Clears the value set by <see cref="SetLastPollingUpdate"/>. This returns the WasPressedThisFrame() behavior
+        /// to the default (ie. based InputSystem.Update calls).
+        /// </summary>
+        public static void ClearLastPollingUpdate()
+        {
+            Assert.IsTrue(s_Manager.lastPollingUpdate != null, "A last polling update wasn't set, are you missing a call to StLastPollingUpdate()?");
+            s_Manager.lastPollingUpdate = null;
+        }
 
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
         internal static RemoteInputPlayerConnection s_RemoteConnection;
