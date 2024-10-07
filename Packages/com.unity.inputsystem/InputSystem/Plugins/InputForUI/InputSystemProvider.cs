@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Unity.IntegerTime;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputForUI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace UnityEngine.InputSystem.Plugins.InputForUI
 {
@@ -307,6 +310,18 @@ namespace UnityEngine.InputSystem.Plugins.InputForUI
         {
             // Flip positions Y axis between input and UITK
             var screenHeight = Screen.height;
+            
+            // PON: We call InputSystem.Update() from InitializationSystemGroup. Unfortunately, during that part of the
+            // Player Loop, the Screen.height value is set in 'editor mode' where it returns the size of the editor 
+            // panel that is currently focused, rather than the Game View. This is not normally an issue because most
+            // games poll input in the normal spot. This causes the editor pointer position to calculate incorrectly.
+            //
+            // To fix this, we're using an editor-only getter to grab the real game view coordinates, rather than assuming
+            // Screen.height is correct. This feels sensible, because Screen.height is hacky to begin with here.
+            #if UNITY_EDITOR
+            screenHeight = (int)Handles.GetMainGameViewSize().y;
+            #endif
+            
             if (targetDisplay > 0 && targetDisplay < Display.displays.Length)
                 screenHeight = Display.displays[targetDisplay].systemHeight;
             position.y = screenHeight - position.y;
